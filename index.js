@@ -13,6 +13,7 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 const Joi = require("joi");
+const { emit } = require("process");
 
 
 const expireTime = 24 * 60 * 60 * 1000; //expires after 1 day  (hours * minutes * seconds * millis)
@@ -137,6 +138,60 @@ app.get('/createUser', (req, res) => {
     res.send(html);
 });
 
+app.get('/signupSubmit', (req, res) => {
+    var html = `error`;
+    var missing = req.query.missing;
+    if (missing == 1) {
+        var html = `
+        Name, email, and password are required.
+        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+    `;
+    } else if (missing == 2) {
+        var html = `
+        Name and email are required.
+        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+    `;
+    } else if (missing == 3) {
+        var html = `
+        Name and password are required.
+        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+    `;
+    } else if (missing == 4) {
+        var html = `
+        Email and password are required.
+        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+    `;
+    } else if (missing == 5) {
+        var html = `
+        Name is required.
+        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+    `;
+    } else if (missing == 6) {
+        var html = `
+        Email is required.
+        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+    `;
+    } else if (missing == 7) {
+        var html = `
+        Password is required.
+        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+    `;
+    }
+    res.send(html);
+});
+
+app.get('/signup', (req, res) => {
+    var html = `
+    create user
+    <form action='/signup' method='post'>
+    <div><input name='username' type='text' placeholder='name'></div>
+    <div><input name='email' type='text' placeholder='email'></div>
+    <div><input name='password' type='password' placeholder='password'></div>
+    <button>Submit</button>
+    </form>
+    `;
+    res.send(html);
+});
 
 app.get('/login', (req, res) => {
     var html = `
@@ -161,6 +216,69 @@ app.post('/submitUser', async (req, res) => {
         });
 
     const validationResult = schema.validate({ username, password });
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/createUser");
+        return;
+    }
+
+    var hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    await userCollection.insertOne({ username: username, password: hashedPassword });
+    console.log("Inserted user");
+
+    var html = "successfully created user";
+    res.send(html);
+});
+
+app.post('/signup', async (req, res) => {
+    var username = req.body.username;
+    var email = req.body.email;
+    var password = req.body.password;
+
+    console.log("username: " + username);
+    console.log("email: " + email);
+    console.log("pw: " + password);
+
+    if (username == '' && email == '' && password == '') {
+        console.log("all are empty");
+        res.redirect('/signupSubmit?missing=1');
+        return;
+    } else if (username == '' && email == '') {
+        console.log("name and email are empty");
+        res.redirect('/signupSubmit?missing=2');
+        return;
+    } else if (username == '' && password == '') {
+        console.log("name and password are empty");
+        res.redirect('/signupSubmit?missing=3');
+        return;
+    } else if (email == '' && password == '') {
+        console.log("email and password are empty");
+        res.redirect('/signupSubmit?missing=4');
+        return;
+    } else if (username == '') {
+        console.log("name is empty");
+        res.redirect('/signupSubmit?missing=5');
+        return;
+    } else if (email == '') {
+        console.log("email is empty");
+        res.redirect('/signupSubmit?missing=6');
+        return;
+    } else if (password == '') {
+        console.log("password is empty");
+        res.redirect('/signupSubmit?missing=7');
+        return;
+    }
+
+    const schema = Joi.object(
+        {
+            username: Joi.string().alphanum().max(20).required(),
+            email: Joi.string().max(40).required(),
+            password: Joi.string().max(20).required()
+        });
+
+    const validationResult = schema.validate({ username, email, password });
+
     if (validationResult.error != null) {
         console.log(validationResult.error);
         res.redirect("/createUser");
