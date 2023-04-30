@@ -257,10 +257,6 @@ app.post('/signup', async (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
 
-    console.log("username: " + username);
-    console.log("email: " + email);
-    console.log("pw: " + password);
-
     if (username == '' && email == '' && password == '') {
         console.log("all are empty");
         res.redirect('/signupSubmit?missing=1');
@@ -317,7 +313,6 @@ app.post('/signup', async (req, res) => {
 
 app.post('/loggingin', async (req, res) => {
     var email = req.body.email;
-    var username = req.body.username;
     var password = req.body.password;
 
     const schema = Joi.string().max(40).required();
@@ -340,7 +335,8 @@ app.post('/loggingin', async (req, res) => {
         console.log("correct password");
         req.session.authenticated = true;
         req.session.email = email;
-        req.session.username = username;
+        req.session.username = result[0].username;
+        console.log(req.session.email);
         req.session.cookie.maxAge = expireTime;
 
         res.redirect('/loggedIn');
