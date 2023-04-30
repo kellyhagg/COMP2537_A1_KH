@@ -144,37 +144,44 @@ app.get('/signupSubmit', (req, res) => {
     if (missing == 1) {
         var html = `
         Name, email, and password are required.
-        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+        <br><br>
+        <a href='/signup'>Try Again</a>
     `;
     } else if (missing == 2) {
         var html = `
         Name and email are required.
-        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+        <br><br>
+        <a href='/signup'>Try Again</a>    
     `;
     } else if (missing == 3) {
         var html = `
         Name and password are required.
-        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+        <br><br>
+        <a href='/signup'>Try Again</a>    
     `;
     } else if (missing == 4) {
         var html = `
         Email and password are required.
-        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+        <br><br>
+        <a href='/signup'>Try Again</a>
     `;
     } else if (missing == 5) {
         var html = `
         Name is required.
-        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+        <br><br>
+        <a href='/signup'>Try Again</a>
     `;
     } else if (missing == 6) {
         var html = `
         Email is required.
-        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+        <br><br>
+        <a href='/signup'>Try Again</a>
     `;
     } else if (missing == 7) {
         var html = `
         Password is required.
-        <div><button onclick="window.location.href='/signup'">Try Again</button></div>
+        <br><br>
+        <a href='/signup'>Try Again</a>
     `;
     }
     res.send(html);
