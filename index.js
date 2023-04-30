@@ -48,7 +48,19 @@ app.use(session({
 ));
 
 app.get('/', (req, res) => {
-    res.send("<h1>Hello World!</h1>");
+    if (!req.session.authenticated) {
+        var html = `
+        <div><button onclick="window.location.href='/signup'">Sign Up</button></div>
+        <div><button onclick="window.location.href='/login'">Log In</button></div>
+        `;
+    } else {
+        var html = `
+        <div>Hello, ${req.session.username}!</div>
+        <div><button onclick="window.location.href='/members'">Go to Members Area</button></div>
+        <div><button onclick="window.location.href='/logout'">Logout</button></div>
+        `;
+    }
+    res.send(html);
 });
 
 app.get('/nosql-injection', async (req, res) => {
@@ -84,7 +96,7 @@ app.get('/nosql-injection', async (req, res) => {
 app.get('/about', (req, res) => {
     var color = req.query.color;
 
-    res.send("<h1 style='color:" + color + ";'>Patrick Guichon</h1>");
+    res.send("<h1 style='color:" + color + ";'>Kelly Hagg</h1>");
 });
 
 app.get('/contact', (req, res) => {
