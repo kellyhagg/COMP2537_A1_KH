@@ -366,10 +366,7 @@ app.get('/loggedIn', (req, res) => {
 
 app.get('/logout', (req, res) => {
     req.session.destroy();
-    var html = `
-    You are logged out.
-    `;
-    res.send(html);
+    res.redirect('/');
 });
 
 
