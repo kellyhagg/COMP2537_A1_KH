@@ -73,7 +73,7 @@ app.get('/members', (req, res) => {
         var html = `
         <h1>Hello, ${req.session.username}!</h1>
 
-        <img src='/public/Screenshot_5.png' width='200px' height='200px'>
+        <img src='/${images[index]}' height='200px'>
 
         <div><button onclick="window.location.href='/logout'">Logout</button></div>
         `;
@@ -142,18 +142,17 @@ app.post('/submitEmail', (req, res) => {
     }
 });
 
-
-app.get('/createUser', (req, res) => {
-    var html = `
-    create user
-    <form action='/submitUser' method='post'>
-    <input name='username' type='text' placeholder='username'>
-    <input name='password' type='password' placeholder='password'>
-    <button>Submit</button>
-    </form>
-    `;
-    res.send(html);
-});
+// app.get('/createUser', (req, res) => {
+//     var html = `
+//     create user
+//     <form action='/submitUser' method='post'>
+//     <input name='username' type='text' placeholder='username'>
+//     <input name='password' type='password' placeholder='password'>
+//     <button>Submit</button>
+//     </form>
+//     `;
+//     res.send(html);
+// });
 
 app.get('/signupSubmit', (req, res) => {
     var html = `error`;
@@ -219,7 +218,7 @@ app.get('/signup', (req, res) => {
 
 app.get('/login', (req, res) => {
     var html = `
-    log in
+    Log in
     <form action='/loggingin' method='post'>
     <div><input name='email' type='text' placeholder='email'></div>
     <div><input name='password' type='password' placeholder='password'></div>
@@ -238,31 +237,31 @@ app.get('/loginSubmit', (req, res) => {
     res.send(html);
 });
 
-app.post('/submitUser', async (req, res) => {
-    var username = req.body.username;
-    var password = req.body.password;
+// app.post('/submitUser', async (req, res) => {
+//     var username = req.body.username;
+//     var password = req.body.password;
 
-    const schema = Joi.object(
-        {
-            username: Joi.string().alphanum().max(20).required(),
-            password: Joi.string().max(20).required()
-        });
+//     const schema = Joi.object(
+//         {
+//             username: Joi.string().alphanum().max(20).required(),
+//             password: Joi.string().max(20).required()
+//         });
 
-    const validationResult = schema.validate({ username, password });
-    if (validationResult.error != null) {
-        console.log(validationResult.error);
-        res.redirect("/createUser");
-        return;
-    }
+//     const validationResult = schema.validate({ username, password });
+//     if (validationResult.error != null) {
+//         console.log(validationResult.error);
+//         res.redirect("/createUser");
+//         return;
+//     }
 
-    var hashedPassword = await bcrypt.hash(password, saltRounds);
+//     var hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    await userCollection.insertOne({ username: username, password: hashedPassword });
-    console.log("Inserted user");
+//     await userCollection.insertOne({ username: username, password: hashedPassword });
+//     console.log("Inserted user");
 
-    var html = "successfully created user";
-    res.send(html);
-});
+//     var html = "successfully created user";
+//     res.send(html);
+// });
 
 app.post('/signup', async (req, res) => {
     var username = req.body.username;
@@ -310,7 +309,7 @@ app.post('/signup', async (req, res) => {
 
     if (validationResult.error != null) {
         console.log(validationResult.error);
-        res.redirect("/createUser");
+        res.redirect("/signup");
         return;
     }
 
@@ -319,8 +318,12 @@ app.post('/signup', async (req, res) => {
     await userCollection.insertOne({ username: username, email: email, password: hashedPassword });
     console.log("Inserted user");
 
-    var html = "successfully created user";
-    res.send(html);
+    req.session.authenticated = true;
+    req.session.email = email;
+    req.session.username = username;
+    req.session.cookie.maxAge = expireTime;
+
+    res.redirect('/members');
 });
 
 app.post('/loggingin', async (req, res) => {
