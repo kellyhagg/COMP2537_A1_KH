@@ -186,11 +186,21 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/loginSubmit', (req, res) => {
-    var html = `
-    Invalid email/password combination.
-    <br><br>
-    <a href='/login'>Try Again</a>
-    `;
+    var missing = req.query.missing;
+    var html = `error`;
+    if (missing == 1) {
+        var html = `
+        User not found.
+        <br><br>
+        <a href='/login'>Try Again</a>
+        `;
+    } else if (missing == 2) {
+        var html = `
+        Invalid password.
+        <br><br>
+        <a href='/login'>Try Again</a>
+        `;
+    }
     res.send(html);
 });
 
@@ -274,7 +284,7 @@ app.post('/loggingin', async (req, res) => {
     console.log(result);
     if (result.length != 1) {
         console.log("user not found");
-        res.redirect("/loginSubmit");
+        res.redirect("/loginSubmit?missing=1");
         return;
     }
     if (await bcrypt.compare(password, result[0].password)) {
@@ -289,7 +299,7 @@ app.post('/loggingin', async (req, res) => {
     }
     else {
         console.log("incorrect password");
-        res.redirect("/loginSubmit");
+        res.redirect("/loginSubmit?missing=2");
         return;
     }
 });
