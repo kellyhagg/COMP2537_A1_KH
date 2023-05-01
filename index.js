@@ -38,7 +38,7 @@ var mongoStore = MongoStore.create({
     crypto: {
         secret: mongodb_session_secret
     }
-})
+});
 
 app.use(session({
     secret: node_session_secret,
