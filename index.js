@@ -111,49 +111,6 @@ app.get('/nosql-injection', async (req, res) => {
     res.send(`<h1>Hello ${username}</h1>`);
 });
 
-// app.get('/about', (req, res) => {
-//     var color = req.query.color;
-
-//     res.send("<h1 style='color:" + color + ";'>Kelly Hagg</h1>");
-// });
-
-// app.get('/contact', (req, res) => {
-//     var missingEmail = req.query.missing;
-//     var html = `
-//         email address:
-//         <form action='/submitEmail' method='post'>
-//             <input name='email' type='text' placeholder='email'>
-//             <button>Submit</button>
-//         </form>
-//     `;
-//     if (missingEmail) {
-//         html += "<br> email is required";
-//     }
-//     res.send(html);
-// });
-
-// app.post('/submitEmail', (req, res) => {
-//     var email = req.body.email;
-//     if (!email) {
-//         res.redirect('/contact?missing=1');
-//     }
-//     else {
-//         res.send("Thanks for subscribing with your email: " + email);
-//     }
-// });
-
-// app.get('/createUser', (req, res) => {
-//     var html = `
-//     create user
-//     <form action='/submitUser' method='post'>
-//     <input name='username' type='text' placeholder='username'>
-//     <input name='password' type='password' placeholder='password'>
-//     <button>Submit</button>
-//     </form>
-//     `;
-//     res.send(html);
-// });
-
 app.get('/signupSubmit', (req, res) => {
     var html = `error`;
     var missing = req.query.missing;
@@ -236,32 +193,6 @@ app.get('/loginSubmit', (req, res) => {
     `;
     res.send(html);
 });
-
-// app.post('/submitUser', async (req, res) => {
-//     var username = req.body.username;
-//     var password = req.body.password;
-
-//     const schema = Joi.object(
-//         {
-//             username: Joi.string().alphanum().max(20).required(),
-//             password: Joi.string().max(20).required()
-//         });
-
-//     const validationResult = schema.validate({ username, password });
-//     if (validationResult.error != null) {
-//         console.log(validationResult.error);
-//         res.redirect("/createUser");
-//         return;
-//     }
-
-//     var hashedPassword = await bcrypt.hash(password, saltRounds);
-
-//     await userCollection.insertOne({ username: username, password: hashedPassword });
-//     console.log("Inserted user");
-
-//     var html = "successfully created user";
-//     res.send(html);
-// });
 
 app.post('/signup', async (req, res) => {
     var username = req.body.username;
@@ -374,23 +305,6 @@ app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
 });
-
-
-// app.get('/cat/:id', (req, res) => {
-
-//     var cat = req.params.id;
-
-//     if (cat == 1) {
-//         res.send("Fluffy: <img src='/fluffy.gif' style='width:250px;'>");
-//     }
-//     else if (cat == 2) {
-//         res.send("Socks: <img src='/socks.gif' style='width:250px;'>");
-//     }
-//     else {
-//         res.send("Invalid cat id: " + cat);
-//     }
-// });
-
 
 app.use(express.static(__dirname + "/public"));
 
