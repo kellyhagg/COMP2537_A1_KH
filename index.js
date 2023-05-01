@@ -16,7 +16,7 @@ const Joi = require("joi");
 const { emit } = require("process");
 
 
-const expireTime = 24 * 60 * 60 * 1000; //expires after 1 day  (hours * minutes * seconds * millis)
+const expireTime = 60 * 60 * 1000; //expires after 1 hour  (minutes * seconds * millis)
 
 /* secret information section */
 const mongodb_host = process.env.MONGODB_HOST;
@@ -68,11 +68,14 @@ app.get('/members', (req, res) => {
     if (!req.session.authenticated) {
         res.redirect('/');
     } else {
+        var images = ['duck.gif', 'frog.gif', 'spongebob.gif'];
+        var index = Math.floor(Math.random() * images.length);
         var html = `
-        <div>Hello, ${req.session.username}!</div>
-        <div><button onclick="window.location.href='/logout'">Logout</button></div>
+        <h1>Hello, ${req.session.username}!</h1>
 
-        Cats go here.
+        <img src='/public/Screenshot_5.png' width='200px' height='200px'>
+
+        <div><button onclick="window.location.href='/logout'">Logout</button></div>
         `;
     }
     res.send(html);
@@ -370,20 +373,20 @@ app.get('/logout', (req, res) => {
 });
 
 
-app.get('/cat/:id', (req, res) => {
+// app.get('/cat/:id', (req, res) => {
 
-    var cat = req.params.id;
+//     var cat = req.params.id;
 
-    if (cat == 1) {
-        res.send("Fluffy: <img src='/fluffy.gif' style='width:250px;'>");
-    }
-    else if (cat == 2) {
-        res.send("Socks: <img src='/socks.gif' style='width:250px;'>");
-    }
-    else {
-        res.send("Invalid cat id: " + cat);
-    }
-});
+//     if (cat == 1) {
+//         res.send("Fluffy: <img src='/fluffy.gif' style='width:250px;'>");
+//     }
+//     else if (cat == 2) {
+//         res.send("Socks: <img src='/socks.gif' style='width:250px;'>");
+//     }
+//     else {
+//         res.send("Invalid cat id: " + cat);
+//     }
+// });
 
 
 app.use(express.static(__dirname + "/public"));
